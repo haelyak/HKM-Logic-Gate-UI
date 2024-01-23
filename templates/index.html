@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Radio Buttons</title>
+    <link rel="stylesheet" href="https://unpkg.com/dragula/dist/dragula.min.css">
+</head>
+
+<body>
+    <h1>Select an Option:</h1>
+    <form action="/write_to_json" method="post">
+        <input type="radio" name="radio_option" value="option1"> Option 1<br>
+        <input type="radio" name="radio_option" value="option2"> Option 2<br>
+        <input type="radio" name="radio_option" value="option3"> Option 3<br>
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+
+    <div id="drag-container" class="container">
+        <div class="drag-item" id="item-1" draggable="true">Item 1</div>
+        <div class="drag-item" id="item-2" draggable="true">Item 2</div>
+        <div class="drag-item" id="item-3" draggable="true">Item 3</div>
+    </div>
+
+    <script src="https://unpkg.com/dragula/dist/dragula.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Dragula
+            var dragContainer = document.getElementById('drag-container');
+            dragula([dragContainer]);
+
+            // Add event listener for drop
+            dragContainer.addEventListener('drop', function() {
+                // You can handle the drop event here
+                console.log('Item dropped');
+            });
+        });
+    </script>
+</body>
+
+</html>
