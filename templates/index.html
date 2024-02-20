@@ -4,19 +4,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HKM Logic Gates UI</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/dragula@3.7.2/dist/dragula.min.js"></script>
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <title>Grid App</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            position: relative;
+            /* Add relative positioning */
+        }
+        
+        #grid-container {
+            display: grid;
+            grid-template-columns: repeat(32, 50px);
+            grid-template-rows: repeat(16, 50px);
+            gap: 1px;
+            margin: 20px auto;
+            border: 1px solid #000;
+            background-color: #f0f0f0;
+        }
+        
+        .box {
+            background-color: #fff;
+            cursor: pointer;
+        }
+        
+        .box.active {
+            background-color: #00f;
+        }
+        
+        #overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 1600px;
+            /* Size of the grid container */
+            height: 800px;
+            /* Size of the grid container */
+        }
+        
+        .overlay-box {
+            position: absolute;
+            background-color: #f00;
+            width: 100px;
+            /* Set width of overlay box */
+            height: 100px;
+            /* Set height of overlay box */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            /* Add transition for smooth color change */
+        }
+        
+        .overlay-box.active {
+            background-color: #0f0;
+            /* New color for the active state */
+        }
+        /* Style for popup menu */
+        
+        #popup-menu {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            border: 1px solid #000;
+            padding: 10px;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="toolbox">
-        <div class="box" id="box-1">Box 1</div>
-        <div class="box" id="box-2">Box 2</div>
-        <div class="box" id="box-3">Box 3</div>
+
+    <div id="grid-container">
+        <!-- Generating the grid boxes using JavaScript -->
     </div>
-    <div class="drag-container" id="drag-container"></div>
+
+    <div id="overlay">
+        <!-- Overlay boxes will be generated here -->
+    </div>
+
+    <!-- Popup menu -->
+    <div id="popup-menu">
+        <h1>Accept Gates</h1>
+        <input type="checkbox" id="checkbox1"><label for="checkbox1">AND</label><br>
+        <input type="checkbox" id="checkbox2"><label for="checkbox2">OR</label><br>
+        <input type="checkbox" id="checkbox3"><label for="checkbox3">XOR</label><br>
+    </div>
+
+    <script>
+        // Function to create grid boxes
+        function createGrid() {
+            const gridContainer = document.getElementById('grid-container');
+            for (let i = 0; i < 16; i++) {
+                for (let j = 0; j < 32; j++) {
+                    const box = document.createElement('div');
+                    box.classList.add('box');
+                    box.dataset.row = i + 1;
+                    box.dataset.column = j + 1;
+                    box.addEventListener('click', function() {
+                        toggleBoxActiveState(box);
+                    });
+                    gridContainer.appendChild(box);
+                }
+            }
+        }
+
+        // Function to toggle the active state of a box
+        function toggleBoxActiveState(box) {
+            box.classList.toggle('active');
+        }
+
+        // Call the function to create the grid on page load
+        window.addEventListener('load', createGrid);
+
+        // Function to generate overlay boxes at certain positions
+        function generateOverlayBox(top, left) {
+            const overlayContainer = document.getElementById('overlay');
+            const overlayBox = document.createElement('div');
+            overlayBox.classList.add('overlay-box');
+            overlayBox.style.top = `${top}px`;
+            overlayBox.style.left = `${left}px`;
+            overlayBox.addEventListener('click', function() {
+                toggleOverlayBoxActiveState(overlayBox);
+                showPopupMenu(overlayBox);
+            });
+            overlayContainer.appendChild(overlayBox);
+        }
+
+        // Call the function to generate overlay boxes at specific 
+        starting_pos = [358, 256, 154, 52]
+        for (let j = 0; j < 4; j++) {
+            for (let i = 0; i < j + 5; i++) {
+                generateOverlayBox(52 + 204 * j, starting_pos[j] + i * 204);
+            }
+        }
+        // Add more generateOverlayBox calls as needed
+
+        // Function to toggle the active state of an overlay box
+        function toggleOverlayBoxActiveState(overlayBox) {
+            overlayBox.classList.toggle('active');
+        }
+
+        // Function to show the popup menu
+        function showPopupMenu(overlayBox) {
+            const popupMenu = document.getElementById('popup-menu');
+            popupMenu.style.display = 'block';
+            // Position the popup menu relative to the clicked overlay box
+            popupMenu.style.top = overlayBox.offsetTop + overlayBox.offsetHeight + 'px';
+            popupMenu.style.left = overlayBox.offsetLeft + overlayBox.offsetWidth + 'px';
+        }
+    </script>
+
 </body>
 
 </html>

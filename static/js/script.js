@@ -1,9 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Dragula for the toolbox and drop container
     var dragContainer = document.getElementById('drag-container');
     var toolbox = document.querySelector('.toolbox');
-
-    var drake = dragula([toolbox]);
 
     // Add event listeners for duplicating and dragging new boxes
     var toolboxBoxes = document.querySelectorAll('.toolbox .box');
@@ -23,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         dragContainer.appendChild(clone);
-        addDragAndDrop(clone); // Add drag-and-drop to the newly cloned box
+        addDragAndDrop(clone);
     }
 
     // Add drag-and-drop functionality to cloned boxes
