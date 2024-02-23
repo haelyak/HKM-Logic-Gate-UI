@@ -84,9 +84,12 @@
     <!-- Popup menu -->
     <div id="popup-menu">
         <h1>Accept Gates</h1>
-        <input type="checkbox" id="checkbox1"><label for="checkbox1">AND</label><br>
-        <input type="checkbox" id="checkbox2"><label for="checkbox2">OR</label><br>
-        <input type="checkbox" id="checkbox3"><label for="checkbox3">XOR</label><br>
+        <input type="checkbox" id="checkbox1" class="accept-gate-checkbox" data-overlay-index="0"><label for="checkbox1">AND</label><br>
+        <input type="checkbox" id="checkbox2" class="accept-gate-checkbox" data-overlay-index="1"><label for="checkbox2">OR</label><br>
+        <input type="checkbox" id="checkbox3" class="accept-gate-checkbox" data-overlay-index="2"><label for="checkbox3">XOR</label><br>
+        <h1>Input Gates</h1>
+        <div id="checkboxes-container">
+        </div>
     </div>
 
     <script>
@@ -116,32 +119,39 @@
         window.addEventListener('load', createGrid);
 
         // Function to generate overlay boxes at certain positions
-        function generateOverlayBox(top, left) {
+        function generateOverlayBox(top, left, label) {
             const overlayContainer = document.getElementById('overlay');
             const overlayBox = document.createElement('div');
             overlayBox.classList.add('overlay-box');
             overlayBox.style.top = `${top}px`;
             overlayBox.style.left = `${left}px`;
-            overlayBox.addEventListener('click', function() {
-                toggleOverlayBoxActiveState(overlayBox);
+
+            // Create and position the label
+            const labelElement = document.createElement('span');
+            labelElement.textContent = label;
+            labelElement.classList.add('overlay-label');
+            overlayBox.appendChild(labelElement);
+
+            overlayBox.addEventListener('click', function(event) {
                 showPopupMenu(overlayBox);
+                event.stopPropagation(); // Prevent the click event from bubbling to the document
             });
             overlayContainer.appendChild(overlayBox);
+
+            return overlayBox;
         }
 
-        // Call the function to generate overlay boxes at specific 
-        starting_pos = [358, 256, 154, 52]
+
+        // Call the function to generate overlay boxes at specific positions
+        let overlayBoxes = []; // Array to hold references to overlay boxes
+        let label = 0;
+        starting_pos = [358, 256, 154, 52];
         for (let j = 0; j < 4; j++) {
             for (let i = 0; i < j + 5; i++) {
-                generateOverlayBox(52 + 204 * j, starting_pos[j] + i * 204);
+                overlayBoxes.push(generateOverlayBox(52 + 204 * j, starting_pos[j] + i * 204, label++));
             }
         }
         // Add more generateOverlayBox calls as needed
-
-        // Function to toggle the active state of an overlay box
-        function toggleOverlayBoxActiveState(overlayBox) {
-            overlayBox.classList.toggle('active');
-        }
 
         // Function to show the popup menu
         function showPopupMenu(overlayBox) {
@@ -150,6 +160,56 @@
             // Position the popup menu relative to the clicked overlay box
             popupMenu.style.top = overlayBox.offsetTop + overlayBox.offsetHeight + 'px';
             popupMenu.style.left = overlayBox.offsetLeft + overlayBox.offsetWidth + 'px';
+
+            // Add event listener to close the popup menu when clicked outside
+            document.addEventListener('click', closePopupMenuOutside);
+        }
+
+        // Function to close the popup menu when clicked outside
+        function closePopupMenuOutside(event) {
+            const popupMenu = document.getElementById('popup-menu');
+            if (!popupMenu.contains(event.target)) {
+                popupMenu.style.display = 'none';
+                document.removeEventListener('click', closePopupMenuOutside);
+            }
+        }
+
+        // Function to generate checkboxes
+        function generateCheckboxes() {
+            const checkboxesContainer = document.getElementById('checkboxes-container');
+
+            for (let i = 0; i < 26; i++) {
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = 'checkbox' + i; // Unique ID for each checkbox
+                checkbox.name = 'checkbox' + i;
+                checkbox.dataset.overlayIndex = i; // Store the index of the associated overlay box
+
+                const label = document.createElement('label');
+                label.htmlFor = 'checkbox' + i;
+                label.textContent = i; // Label text from 0 to 25
+
+                checkboxesContainer.appendChild(checkbox);
+                checkboxesContainer.appendChild(label);
+                checkboxesContainer.appendChild(document.createElement('br')); // Add line break
+            }
+        }
+
+        // Call the function to generate checkboxes on page load
+        window.addEventListener('load', generateCheckboxes);
+
+        // Add event listener to toggle overlay box color when an "Accept Gates" checkbox is clicked
+        const acceptGateCheckboxes = document.querySelectorAll('.accept-gate-checkbox');
+        acceptGateCheckboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                toggleOverlayBoxColor(checkbox.dataset.overlayIndex);
+            });
+        });
+
+        // Function to toggle the color of an overlay box associated with an "Accept Gates" checkbox
+        function toggleOverlayBoxColor(index) {
+            const overlayBox = overlayBoxes[index];
+            overlayBox.classList.toggle('active');
         }
     </script>
 
